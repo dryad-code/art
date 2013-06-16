@@ -1,0 +1,43 @@
+#!/usr/bin/python
+import curses
+from curses import textpad
+import sys
+def main_func(stdscr):
+	tpad = textpad.Textbox(stdscr)
+	max_y, max_x = stdscr.getmaxyx()
+	cx = 1
+	cy = 0
+	cd = False
+	lc = (cy, cx)
+	while True:
+		c = stdscr.getch()
+		if c == curses.KEY_RIGHT:
+			cx = cx + 1
+			stdscr.move(cy, cx)
+			stdscr.refresh()
+		elif c == curses.KEY_LEFT:
+			cx = cx - 1
+			stdscr.move(cy, cx)
+			stdscr.refresh()
+		elif c == curses.KEY_UP:
+			cy = cy - 1
+			stdscr.move(cy, cx)
+			stdscr.refresh()
+		elif c == curses.KEY_DOWN:
+			cy = cy + 1
+			stdscr.move(cy, cx)
+			stdscr.refresh()
+		elif c == ord('s'):
+			curses.endwin()
+			sc = tpad.gather()
+			fp.truncate()
+			fp.write(sc)
+			print sc
+			exit(0)
+			
+		else:
+			stdscr.addstr(chr(c))
+			cx = cx + 1
+		stdscr.refresh()
+fp = open(sys.argv[1], 'w')
+curses.wrapper(main_func)
