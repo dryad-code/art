@@ -2,42 +2,67 @@
 import curses
 from curses import textpad
 import sys
+import os
 def main_func(stdscr):
+	curses.raw()
 	tpad = textpad.Textbox(stdscr)
 	max_y, max_x = stdscr.getmaxyx()
-	cx = 1
+	cx = 0
 	cy = 0
 	cd = False
 	lc = (cy, cx)
-	while True:
-		c = stdscr.getch()
-		if c == curses.KEY_RIGHT:
-			cx = cx + 1
-			stdscr.move(cy, cx)
-			stdscr.refresh()
-		elif c == curses.KEY_LEFT:
-			cx = cx - 1
-			stdscr.move(cy, cx)
-			stdscr.refresh()
-		elif c == curses.KEY_UP:
-			cy = cy - 1
-			stdscr.move(cy, cx)
-			stdscr.refresh()
-		elif c == curses.KEY_DOWN:
-			cy = cy + 1
-			stdscr.move(cy, cx)
-			stdscr.refresh()
-		elif c == ord('s'):
-			curses.endwin()
-			sc = tpad.gather()
-			fp.truncate()
-			fp.write(sc)
-			print sc
-			exit(0)
-			
-		else:
-			stdscr.addstr(chr(c))
-			cx = cx + 1
+	if read == True:
+		stdscr.addstr(cy, cx, fp.read())
+		stdscr.move(cy, cx)
 		stdscr.refresh()
-fp = open(sys.argv[1], 'w')
+	try:
+		while True:
+			c = stdscr.getch()
+			if c == curses.KEY_RIGHT:
+				cx = cx + 1
+				stdscr.move(cy, cx)
+				stdscr.refresh()
+			elif c == curses.KEY_LEFT:
+				cx = cx - 1
+				stdscr.move(cy, cx)
+				stdscr.refresh()
+			elif c == curses.KEY_UP:
+				cy = cy - 1
+				stdscr.move(cy, cx)
+				stdscr.refresh()
+			elif c == curses.KEY_DOWN:
+				cy = cy + 1
+				stdscr.move(cy, cx)
+				stdscr.refresh()
+			elif c == 25:
+				curses.endwin()
+				sc = tpad.gather()
+				fp.seek(0,0)
+				fp.truncate(0)
+				fp.write(sc)
+				print sc
+				exit(0)
+			elif c == curses.KEY_BACKSPACE:
+				cx = cx - 1
+				stdscr.move(cy,cx)
+				stdscr.delch(cy,cx)
+				stdscr.refresh()
+			else:
+				stdscr.addstr(chr(c))
+				cx = cx + 1
+			stdscr.refresh()
+	except:
+		curses.endwin()
+		sc = tpad.gather()
+		fp.seek(0,0)
+		fp.truncate(0)
+		fp.write(sc)
+		print sc
+		exit(0)
+if os.path.exists(sys.argv[1]):
+	fp = open(sys.argv[1], 'r+')
+	read = True
+else:
+	fp = open(sys.argv[1], 'w')
+	read = False
 curses.wrapper(main_func)
